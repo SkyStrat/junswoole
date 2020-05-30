@@ -13,9 +13,11 @@ namespace app\swoole;
 class WebSocket
 {
     private $ws;
+    private $redis;
 
-    public function __construct()
+    public function __construct(\Redis $redis)
     {
+        $this->redis = $redis;
         $config = config();
         $this->ws = new \swoole_websocket_server($config['websocket']['ip'], $config['websocket']['port']);
         $this->ws->set($config['set']);
@@ -28,29 +30,29 @@ class WebSocket
 
     public function onOpen($server, $request)
     {
-        $a = fopen('open.log','w+');
-        fwrite($a, json_encode($server));
-        fwrite($a, "\r\n\r\n\r\n\r\n");
-        fwrite($a, json_encode($request));
+        //$this->redis->hSet('websocket',$request->fd, '');
         echo "server: handshake success with fd{$request->fd}\n";
     }
 
     public function onMessage($server, $frame)
     {
-        $a = fopen('message.log','w+');
-        fwrite($a, json_encode($server));
-        fwrite($a, "\r\n\r\n\r\n\r\n");
-        fwrite($a, json_encode($frame));
-        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        $server->push($frame->fd, "this is server");
+        $data_arr = json_decode($frame->data, true);
+        if(!isset($data_arr['type'])) {
+            $server->disconnect($frame->fd, 1000, '信息格式错误'); //主动关闭连接
+        }else {
+            switch ($data_arr['type']) {
+                case "login" :
+                    $this->redis->hSet('websocket', $frame->fd, $data_arr['user_id']);
+                    break;
+                default :
+                    $server->push($frame->fd, 'send null');
+            }
+        }
     }
 
     public function onClose($ser, $fd)
     {
-        $a = fopen('close.log','w+');
-        fwrite($a, json_encode($ser));
-        fwrite($a, "\r\n\r\n\r\n\r\n");
-        fwrite($a, json_encode($fd));
+        $this->redis->hDel('websocket', $fd);
         echo "client {$fd} closed\n";
     }
 }

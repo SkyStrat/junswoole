@@ -16,9 +16,11 @@ class Console implements ConsoleInterface
     public function start(String $type)
     {
         echo "start\n";
+        $redis = new \Redis();
         switch ($type) {
             case "websocket" :
-                new WebSocket();
+                $redis->select(0); //选择0号库
+                new WebSocket($redis);
                 break;
             default :
                 echo "null start\n";

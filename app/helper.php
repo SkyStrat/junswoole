@@ -16,7 +16,11 @@ if(!function_exists('config')) {
                 'worker_num' => 8,
                 'reload_async' => true,
                 'max_wait_time' => 3
-            ]
+            ],
+            'redisset' => [
+                'ip' => '192.168.27.3',
+                'port' => 6379
+            ],
         ];
     }
 }
