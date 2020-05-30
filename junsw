@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+namespace app;
+
+//加载基础文件
+require_once __DIR__. '/vendor/autoload.php';
+
+(new Command())->run();

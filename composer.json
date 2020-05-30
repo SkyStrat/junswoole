@@ -1,0 +1,23 @@
+{
+    "name": "jun/sky",
+    "description": "采用原生swoole构建的消息系统",
+    "type": "project",
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "authors": [
+        {
+            "name": "jun",
+            "email": "jun@example.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        },
+        "files": [
+            "app/helper.php"
+        ]
+    },
+    "minimum-stability": "dev"
+}
