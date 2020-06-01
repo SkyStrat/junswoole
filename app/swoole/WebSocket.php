@@ -48,7 +48,7 @@ class WebSocket
         }else {
             switch ($data_arr['type']) {
                 case "login" :
-                    $this->redis->hSet('websocket', $frame->fd, $data_arr['user_id']);
+                    $this->redis->hSet('user_id_fd', $frame->fd, $data_arr['user_id']);
                     break;
                 default :
                     $server->push($frame->fd, 'send null');
