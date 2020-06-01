@@ -58,7 +58,7 @@ class WebSocket
 
     public function onClose($ser, $fd)
     {
-        $this->redis->hDel('websocket', $fd);
+        $this->redis->hDel('user_id_fd', $fd);
         echo "client {$fd} closed\n";
     }
 }
