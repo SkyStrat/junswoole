@@ -10,12 +10,14 @@ namespace app\swoole;
 
 
 
+use app\Util\driver\Redis;
+
 class WebSocket
 {
     private $ws;
     private $redis;
 
-    public function __construct(\Redis $redis)
+    public function __construct(Redis $redis)
     {
         $this->redis = $redis;
         $config = config();

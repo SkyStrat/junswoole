@@ -10,16 +10,19 @@ namespace app;
 
 use app\consoleface\ConsoleInterface;
 use app\swoole\WebSocket;
+use app\Util\driver\Redis;
 
 class Console implements ConsoleInterface
 {
     public function start(String $type)
     {
         echo "start\n";
-        $redis = new \Redis();
+        //$redis = new \Redis();
+        $config = config();
         switch ($type) {
             case "websocket" :
-                $redis->select(0); //选择0号库
+                $config['redisset']['select'] = 0; //标识选择0号库
+                $redis = new Redis($config['redisset']);
                 new WebSocket($redis);
                 break;
             default :

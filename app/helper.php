@@ -18,7 +18,7 @@ if(!function_exists('config')) {
                 'max_wait_time' => 3
             ],
             'redisset' => [
-                'ip' => '192.168.27.3',
+                'host' => '127.0.0.1',
                 'port' => 6379
             ],
         ];
