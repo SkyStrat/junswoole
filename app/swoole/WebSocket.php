@@ -39,8 +39,12 @@ class WebSocket
     public function onMessage($server, $frame)
     {
         $data_arr = json_decode($frame->data, true);
-        if(!isset($data_arr['type'])) {
+        if(is_null($data_arr)) {
             $server->disconnect($frame->fd, 1000, '信息格式错误'); //主动关闭连接
+        }
+
+        if(!isset($data_arr['type'])) {
+            $server->disconnect($frame->fd, 1000, '缺少字段信息'); //主动关闭连接
         }else {
             switch ($data_arr['type']) {
                 case "login" :
