@@ -16,13 +16,15 @@ class WebSocket
 {
     private $ws;
     private $redis;
+    private $config;
 
     public function __construct(Redis $redis)
     {
         $this->redis = $redis;
-        $config = config();
-        $this->ws = new \swoole_websocket_server($config['websocket']['ip'], $config['websocket']['port']);
-        $this->ws->set($config['set']);
+
+        $this->config = config();
+        $this->ws = new \swoole_websocket_server($this->config['websocket']['ip'], $this->config['websocket']['port']);
+        $this->ws->set($this->config['set']);
         $this->ws->on('open',  [$this, 'onOpen']);
         $this->ws->on('message',  [$this, 'onMessage']);
         $this->ws->on('close',  [$this, 'onClose']);
@@ -49,6 +51,20 @@ class WebSocket
             switch ($data_arr['type']) {
                 case "login" :
                     $this->redis->hSet('user_id_fd', $frame->fd, $data_arr['user_id']);
+                    $swoole_mysql = new \Swoole\Coroutine\MySQL();
+                    $swoole_mysql->connect($this->config['mysqlset']);
+                    $sql = "select a.isread, b.title, b.content from message_accept a left join backround_message b on a.msg_id = b.id where a.accept_account = ? and b.status = ?";
+                    $stmt = $swoole_mysql->prepare($sql);
+                    if ($stmt) {
+                        $result = $stmt->execute(array($data_arr['user_id'], 1));
+                        $server->push($frame->fd, json_encode($result));
+                    } else {
+                        echo $swoole_mysql->errno.$swoole_mysql->error."\n";
+                        $error = fopen('mysql.log', 'a');
+                        fwrite($error, date('Y-m-d H:i:s')." [mysql-error-message] errno：".$swoole_mysql->errno."\r\n error：".$swoole_mysql->error."\r\n\r\n");
+                        fclose($error);
+                    }
+
                     break;
                 default :
                     $server->push($frame->fd, 'send null');

@@ -21,6 +21,13 @@ if(!function_exists('config')) {
                 'host' => '127.0.0.1',
                 'port' => 6379
             ],
+            'mysqlset' => [
+                'host' => '127.0.0.1',
+                'port' => 3306,
+                'user' => 'dmk',
+                'password' => 'adminrootdmk',
+                'database' => 'jun'
+            ],
         ];
     }
 }
