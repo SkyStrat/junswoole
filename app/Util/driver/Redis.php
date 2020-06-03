@@ -129,11 +129,11 @@ class Redis extends Driver
         }
         
         /*------存redis的key名称，免得存了什么key都不知道-----*/
-        $insert = [
+        /*$insert = [
             'redis_key' => $name,
             'time_out'  => empty($expire)? 0 : $expire
         ];
-        Db::connect('db_admin')->query('REPLACE INTO redis_key (redis_key,time_out)VALUE("'.$insert['redis_key'].'","'.$insert['time_out'].'")');
+        Db::connect('db_admin')->query('REPLACE INTO redis_key (redis_key,time_out)VALUE("'.$insert['redis_key'].'","'.$insert['time_out'].'")');*/
         /*------存redis的key名称，免得存了什么key都不知道-----*/
         
         isset($first) && $this->setTagItem($key);
